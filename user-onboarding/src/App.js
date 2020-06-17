@@ -12,7 +12,7 @@ const initialFormValues = {
   name: "",
   email: "",
   password: "",
-  terms: "",
+  terms: false,
   role: "",
   languages: {
     html: false,
@@ -74,7 +74,14 @@ export default function App() {
   }
 
   // create checkbox event handler
-  const onCheckboxChange = event => {
+  const onCheckboxChangeTerms = event => {
+    const { checked } = event.target
+    setFormValues({
+      ...formValues,
+      terms: checked,
+    })
+  }
+  const onCheckboxChangeLanguages = event => {
     const { name, checked } = event.target
     setFormValues({
       ...formValues,
@@ -84,6 +91,7 @@ export default function App() {
       }
     })
   }
+
   const onSubmit = event => {
     event.preventDefault()
 
@@ -109,7 +117,8 @@ export default function App() {
         values={formValues}
         onSubmit={onSubmit}
         onInputChange={onInputChange}
-        onCheckboxChange={onCheckboxChange}
+        onCheckboxChangeTerms={onCheckboxChangeTerms}
+        onCheckboxChangeLanguages={onCheckboxChangeLanguages}
         disabled={disabled}
         errors={formErrors}
       />
