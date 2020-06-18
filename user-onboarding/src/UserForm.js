@@ -12,7 +12,11 @@ export default function UserForm(props) {
       } = props
 
       return(
-        <form>
+        <form onSubmit={onSubmit}>
+            {/* <div>errors.name</div>
+            <div>errors.email</div>
+            <div>errors.password</div>
+            <div>errors.role</div> */}
             <div>
                 <h1>New User</h1>
             </div>
@@ -39,6 +43,7 @@ export default function UserForm(props) {
                         onChange={onInputChange}
                         name='password'
                         type='text'
+                        autoComplete="off"
                     />
                 </label>
                 <label>Terms of Service:&nbsp;
@@ -107,6 +112,7 @@ export default function UserForm(props) {
                             checked={values.languages.python}
                         />
                     </label>
+                    <button disabled={disabled}>submit</button>
                 </div>
             </form>
         )

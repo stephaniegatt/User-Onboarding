@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import UserForm from "./UserForm";
 import axios from "axios";
@@ -30,30 +30,19 @@ const initialFormErrors = {
   terms: "",
   role: "",
 }
-const initialUser = [];
-const initialDisabled = true; // boolean for onSubmit
 
 export default function App() {
   // app state
-  const [user, setUser] = useState(initialUser)
+  const [users, setUsers] = useState([])
   const [formValues, setFormValues] = useState(initialFormValues)
-  const [disabled, setDisabled] = useState(initialDisabled)
+  const [disabled, setDisabled] = useState(false)
   const [formErrors, setFormErrors] = useState(initialFormErrors)
 
-  const getUser = () => {
-    axios.get("https://reqres.in/api/users")
-      .then(response => {
-        setUser(response.data)
-      })
-      .catch(error => {
-
-      })
-  }
   const postNewUser = newUser => {
-   
     axios.post("https://reqres.in/api/users", newUser)
-      .then(res => {
-        setUser([ ...user, res.data ])
+      .then(response => {
+        console.log(response.data)
+        setUsers([ ...users, response.data ])
       })
       .catch(error => {
         debugger
@@ -64,9 +53,34 @@ export default function App() {
   }
 
   // create onChange event handler
+  // const onInputChange = event => {
+  //   const name = event.target.name
+  //   const value = event.target.value
+  //   setFormValues({
+  //     ...formValues,
+  //     [name]: value
+  //   })
+  // }
+
   const onInputChange = event => {
-    const name = event.target.name
-    const value = event.target.value
+    const { name, value } = event.target
+
+    Yup
+      .reach(formSchema, name)
+      .validate(value)
+      .then(() => {
+        setFormErrors({
+          ...formErrors,
+          [name]: ""
+        })
+      })
+      .catch(err => {
+        setFormErrors({
+          ...formErrors,
+          [name]: err.errors[0]
+        })
+      })
+
     setFormValues({
       ...formValues,
       [name]: value
@@ -105,10 +119,6 @@ export default function App() {
     }
     postNewUser(newUser)
   }
- useEffect(() => {
-  getUser()
- }, [])
-
 
   return (
     <div className="App">
@@ -122,13 +132,18 @@ export default function App() {
         disabled={disabled}
         errors={formErrors}
       />
-       {/* {
-        user.map(oneUser => {
+      {
+        users.map(user => {
           return (
-            <Friend key={friend.id} details={friend} />
+            <div key={user.id}>
+              <h3>{user.name}</h3>
+              <p>{user.email}</p>
+              <p>{user.role}</p>
+              <p>{user.languages.join(", ")}</p>
+            </div>
           )
         })
-      } */}
+      }
     </div>
   );
 }
